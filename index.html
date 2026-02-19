@@ -39,20 +39,34 @@
         <br>
         <button onclick="playMusic()">Play</button>
         <button onclick="pauseMusic()">Pause</button>
+        <button onclick="nextSong()">Next</button>
     </div>
 
-    <script>
-        const song = document.getElementById("song");
+<script>
+    const songs = ["song1.mp3", "song2.mp3", "song3.mp3"];
+    let currentSong = 0;
 
-        function playMusic() {
-            song.play();
-        }
+    const audio = document.getElementById("song");
 
-        function pauseMusic() {
-            song.pause();
+    function playMusic() {
+        audio.play();
+    }
+
+    function pauseMusic() {
+        audio.pause();
+    }
+
+    function nextSong() {
+        currentSong++;
+        if (currentSong >= songs.length) {
+            currentSong = 0;
         }
-    </script>
+        audio.src = songs[currentSong];
+        audio.play();
+    }
+</script>
 
 </body>
 </html>
+
 
