@@ -1,65 +1,95 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Music Player</title>
+    <title>Anime Music Player</title>
     <style>
         body {
-            background: #111;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #ff4e88, #6a5acd);
             color: white;
-            text-align: center;
-            font-family: Arial;
         }
 
         .player {
-            margin-top: 100px;
+            background: rgba(0,0,0,0.6);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            width: 350px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+
+        .album {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            animation: spin 5s linear infinite;
+            animation-play-state: paused;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         button {
-            padding: 10px 20px;
-            margin: 10px;
-            font-size: 16px;
-            border-radius: 10px;
+            padding: 10px 15px;
+            margin: 5px;
             border: none;
+            border-radius: 10px;
             cursor: pointer;
+            font-size: 16px;
         }
 
         button:hover {
-            background: #444;
-            color: white;
+            opacity: 0.8;
         }
 
         input[type="range"] {
-            width: 300px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        h2 {
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
 
 <div class="player">
-    <h1>🎵 Music Player</h1>
+    <h2 id="title">Song 1</h2>
 
-    <h3 id="title">Song 1</h3>
+    <img id="album" class="album" src="cover1.jpg">
 
     <audio id="audio"></audio>
 
-    <br>
-
-    <button onclick="prevSong()">⏮</button>
-    <button onclick="playPause()">▶️ / ⏸</button>
-    <button onclick="nextSong()">⏭</button>
-
-    <br><br>
+    <div>
+        <button onclick="prevSong()">⏮</button>
+        <button onclick="playPause()">▶️ / ⏸</button>
+        <button onclick="nextSong()">⏭</button>
+    </div>
 
     <input type="range" id="progress" value="0">
+
+    <br>
+    🔊 Volume
+    <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
 
 </div>
 
 <script>
 
 const songs = [
-    { name: "Song 1", file: "song1.mp3" },
-    { name: "Song 2", file: "song2.mp3" },
-    { name: "Song 3", file: "song3.mp3" }
+    { name: "Song 1", file: "song1.mp3", cover: "cover1.jpg" },
+    { name: "Song 2", file: "song2.mp3", cover: "cover2.jpg" },
+    { name: "Song 3", file: "song3.mp3", cover: "cover3.jpg" }
 ];
 
 let currentSong = 0;
@@ -68,17 +98,22 @@ let isPlaying = false;
 const audio = document.getElementById("audio");
 const title = document.getElementById("title");
 const progress = document.getElementById("progress");
+const album = document.getElementById("album");
+const volume = document.getElementById("volume");
 
 function loadSong(index) {
     audio.src = songs[index].file;
+    album.src = songs[index].cover;
     title.textContent = songs[index].name;
 }
 
 function playPause() {
     if (isPlaying) {
         audio.pause();
+        album.style.animationPlayState = "paused";
     } else {
         audio.play();
+        album.style.animationPlayState = "running";
     }
     isPlaying = !isPlaying;
 }
@@ -88,6 +123,7 @@ function nextSong() {
     if (currentSong >= songs.length) currentSong = 0;
     loadSong(currentSong);
     audio.play();
+    album.style.animationPlayState = "running";
     isPlaying = true;
 }
 
@@ -96,6 +132,7 @@ function prevSong() {
     if (currentSong < 0) currentSong = songs.length - 1;
     loadSong(currentSong);
     audio.play();
+    album.style.animationPlayState = "running";
     isPlaying = true;
 }
 
@@ -105,6 +142,10 @@ audio.addEventListener("timeupdate", () => {
 
 progress.addEventListener("input", () => {
     audio.currentTime = (progress.value / 100) * audio.duration;
+});
+
+volume.addEventListener("input", () => {
+    audio.volume = volume.value;
 });
 
 audio.addEventListener("ended", nextSong);
