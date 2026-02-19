@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Zero Two Player</title>
+    <title>Zero Two YouTube Player</title>
     <style>
         body {
             margin: 0;
@@ -9,7 +9,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: Arial, sans-serif;
+            font-family: Arial;
             background: linear-gradient(135deg, #ff0844, #ff2e63, #ff6f91);
             color: white;
         }
@@ -19,147 +19,84 @@
             padding: 30px;
             border-radius: 25px;
             text-align: center;
-            width: 360px;
+            width: 400px;
             box-shadow: 0 0 40px #ff2e63;
         }
 
-        h2 {
-            margin-bottom: 15px;
-            text-shadow: 0 0 10px #ff2e63;
-        }
-
-        .album {
-            width: 220px;
-            height: 220px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 20px;
-            border: 4px solid #ff2e63;
-            box-shadow: 0 0 30px #ff2e63;
-            animation: spin 6s linear infinite;
-            animation-play-state: paused;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 10px;
+            border: none;
+            margin-bottom: 10px;
         }
 
         button {
-            padding: 10px 18px;
+            padding: 10px 15px;
             margin: 5px;
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 16px;
             background: #ff2e63;
             color: white;
-            box-shadow: 0 0 15px #ff2e63;
         }
 
         button:hover {
-            transform: scale(1.1);
-        }
-
-        input[type="range"] {
-            width: 100%;
-            margin-top: 10px;
-            accent-color: #ff2e63;
-        }
-
-        .volume-label {
-            margin-top: 10px;
-            font-size: 14px;
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
 
 <div class="player">
-    <h2 id="title">Zero Two Song</h2>
+    <h2>💖 Zero Two YouTube Player</h2>
 
-    <img id="album" class="album" src="cover1.jpg">
+    <input type="text" id="ytlink" placeholder="Dán link YouTube vào đây">
 
-    <audio id="audio"></audio>
+    <button onclick="loadVideo()">Load</button>
+    <button onclick="playVideo()">▶ Play</button>
+    <button onclick="pauseVideo()">⏸ Pause</button>
 
-    <div>
-        <button onclick="prevSong()">⏮</button>
-        <button onclick="playPause()">▶️ / ⏸</button>
-        <button onclick="nextSong()">⏭</button>
-    </div>
-
-    <input type="range" id="progress" value="0">
-
-    <div class="volume-label">🔊 Volume</div>
-    <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
+    <div id="player" style="margin-top:15px;"></div>
 </div>
 
+<script src="https://www.youtube.com/iframe_api"></script>
+
 <script>
+let player;
 
-const songs = [
-    { name: "Zero Two Theme", file: "song1.mp3", cover: "cover1.jpg" },
-    { name: "Darling Vibes", file: "song2.mp3", cover: "cover2.jpg" },
-    { name: "Waifu Energy", file: "song3.mp3", cover: "cover3.jpg" }
-];
-
-let currentSong = 0;
-let isPlaying = false;
-
-const audio = document.getElementById("audio");
-const title = document.getElementById("title");
-const progress = document.getElementById("progress");
-const album = document.getElementById("album");
-const volume = document.getElementById("volume");
-
-function loadSong(index) {
-    audio.src = songs[index].file;
-    album.src = songs[index].cover;
-    title.textContent = songs[index].name;
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+        height: '250',
+        width: '100%',
+        videoId: ''
+    });
 }
 
-function playPause() {
-    if (isPlaying) {
-        audio.pause();
-        album.style.animationPlayState = "paused";
+function getVideoId(url) {
+    let regExp = /(?:youtube\.com.*(?:\?|&)v=|youtu\.be\/)([^&]+)/;
+    let match = url.match(regExp);
+    return match ? match[1] : null;
+}
+
+function loadVideo() {
+    let url = document.getElementById("ytlink").value;
+    let videoId = getVideoId(url);
+
+    if (videoId) {
+        player.loadVideoById(videoId);
     } else {
-        audio.play();
-        album.style.animationPlayState = "running";
+        alert("Link không hợp lệ 😢");
     }
-    isPlaying = !isPlaying;
 }
 
-function nextSong() {
-    currentSong = (currentSong + 1) % songs.length;
-    loadSong(currentSong);
-    audio.play();
-    album.style.animationPlayState = "running";
-    isPlaying = true;
+function playVideo() {
+    if (player) player.playVideo();
 }
 
-function prevSong() {
-    currentSong = (currentSong - 1 + songs.length) % songs.length;
-    loadSong(currentSong);
-    audio.play();
-    album.style.animationPlayState = "running";
-    isPlaying = true;
+function pauseVideo() {
+    if (player) player.pauseVideo();
 }
-
-audio.addEventListener("timeupdate", () => {
-    progress.value = (audio.currentTime / audio.duration) * 100;
-});
-
-progress.addEventListener("input", () => {
-    audio.currentTime = (progress.value / 100) * audio.duration;
-});
-
-volume.addEventListener("input", () => {
-    audio.volume = volume.value;
-});
-
-audio.addEventListener("ended", nextSong);
-
-loadSong(currentSong);
-
 </script>
 
 </body>
