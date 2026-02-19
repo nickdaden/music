@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Zero Two YouTube Player</title>
+    <title>Zero Two Audio Player</title>
     <style>
         body {
             margin: 0;
@@ -15,7 +15,7 @@
         }
 
         .player {
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.8);
             padding: 30px;
             border-radius: 25px;
             text-align: center;
@@ -44,60 +44,8 @@
         button:hover {
             transform: scale(1.05);
         }
-    </style>
-</head>
-<body>
 
-<div class="player">
-    <h2>💖 Zero Two YouTube Player</h2>
-
-    <input type="text" id="ytlink" placeholder="Dán link YouTube vào đây">
-
-    <button onclick="loadVideo()">Load</button>
-    <button onclick="playVideo()">▶ Play</button>
-    <button onclick="pauseVideo()">⏸ Pause</button>
-
-    <div id="player" style="margin-top:15px;"></div>
-</div>
-
-<script src="https://www.youtube.com/iframe_api"></script>
-
-<script>
-let player;
-
-function onYouTubeIframeAPIReady() {
-    player = new YT.Player('player', {
-        height: '250',
-        width: '100%',
-        videoId: ''
-    });
-}
-
-function getVideoId(url) {
-    let regExp = /(?:youtube\.com.*(?:\?|&)v=|youtu\.be\/)([^&]+)/;
-    let match = url.match(regExp);
-    return match ? match[1] : null;
-}
-
-function loadVideo() {
-    let url = document.getElementById("ytlink").value;
-    let videoId = getVideoId(url);
-
-    if (videoId) {
-        player.loadVideoById(videoId);
-    } else {
-        alert("Link không hợp lệ 😢");
-    }
-}
-
-function playVideo() {
-    if (player) player.playVideo();
-}
-
-function pauseVideo() {
-    if (player) player.pauseVideo();
-}
-</script>
-
-</body>
-</html>
+        #player {
+            width: 0;
+            height: 0;
+            overflow: hidd
